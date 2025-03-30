@@ -12,7 +12,7 @@ namespace Proyecto_POO.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // ✅ Configuración de User
+            // Configuración de User
             modelBuilder.Entity<User>()
                 .HasKey(u => u.Idpersona); // Se usa solo Idpersona como clave primaria
 
@@ -20,9 +20,9 @@ namespace Proyecto_POO.Data
                 .HasOne(u => u.Person)
                 .WithOne(p => p.User)
                 .HasForeignKey<User>(u => u.Idpersona)
-                .OnDelete(DeleteBehavior.Cascade); // Si se borra Person, también su User
+                .OnDelete(DeleteBehavior.Cascade); // Si se borra Person también su User
 
-            // ✅ Configuración opcional para prevenir strings nulos en SQL Server
+            // Configuración opcional para prevenir strings nulos en SQL Server
             modelBuilder.Entity<Person>()
                 .Property(p => p.Identificacion)
                 .IsRequired()

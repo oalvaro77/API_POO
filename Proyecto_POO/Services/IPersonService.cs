@@ -23,5 +23,6 @@ namespace Proyecto_POO.Services
         string GenerarLogin(Person person);
         string GenerarPassword();
         User GenerarUsuario(Person person);
+        string GenerarApiKey();
     }
 }

@@ -89,11 +89,6 @@ namespace Proyecto_POO.Services
 
 
 
-
-
-
-
-
         public string GenerarLogin(Person person)
         {
             return $"{person.Pnombre}{person.Papellido[0]}{person.Id}";
@@ -104,13 +99,19 @@ namespace Proyecto_POO.Services
             return Guid.NewGuid().ToString().Substring(0,8);
         }
 
+        public string GenerarApiKey()
+        {
+            return Guid.NewGuid().ToString("N");
+        }
+
         public User GenerarUsuario(Person person)
         {
             return new User()
             {
                 Idpersona = person.Id,
                 Login = GenerarLogin(person),
-                Password = GenerarPassword()
+                Password = GenerarPassword(),
+                ApiKey = GenerarApiKey()
             };
         }
           

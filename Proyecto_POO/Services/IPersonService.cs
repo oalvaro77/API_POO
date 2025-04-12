@@ -1,28 +1,29 @@
-﻿using Proyecto_POO.Models;
+﻿using Proyecto_POO.DTOs;
+using Proyecto_POO.Models;
 
 namespace Proyecto_POO.Services
 {
     public interface IPersonService
     {
-        void CrearPersona(Person person);
-        IEnumerable<Person> ObtenerTodasLasPersonas();
+        (User user, string password) CrearPersona(PersonDTO usuarioRegisterDTO);
+        IEnumerable<PersonDTO> ObtenerTodasLasPersonas();
 
-        Person PersonaPorID(int id);
-        Person? PersonaPorIdentificacion(string identificacion);
-        IEnumerable<Person> PersonaPorEdad(int edad);
-        IEnumerable<Person> PersonaPorPNombre(string Pnombre);
-        IEnumerable<Person> PersonaPorApellido(string PApellido);
+        PersonDTO? PersonaPorID(int id);
+        PersonDTO? PersonaPorIdentificacion(string identificacion);
+        IEnumerable<PersonDTO> PersonaPorEdad(int edad);
+        IEnumerable<PersonDTO> PersonaPorPNombre(string Pnombre);
+        IEnumerable<PersonDTO> PersonaPorApellido(string PApellido);
 
 
         bool ActualizarPersona(Person person);
         bool EliminarPersona(int id);
         bool CambiarPassword(int personaid, string newPasswrod);
-        User GetUserDetails(int personid);
+        UserDTO GetUserDetails(int personid);
 
 
         string GenerarLogin(Person person);
         string GenerarPassword();
-        User GenerarUsuario(Person person);
+        (User user, string plainPassword) GenerarUsuario(Person person);
         string GenerarApiKey();
     }
 }

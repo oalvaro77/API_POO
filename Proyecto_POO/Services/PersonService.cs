@@ -1,62 +1,78 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Proyecto_POO.Data;
+using Proyecto_POO.DTOs;
 using Proyecto_POO.Models;
-using System.Data.SqlTypes;
 
 namespace Proyecto_POO.Services
 {
     public class PersonService : IPersonService
     {
         private readonly ProjectDbContext _context;
+        private readonly IPasswordHasher _passwordHasher;
+        private readonly IMapper _mapper;
 
-        public PersonService(ProjectDbContext context)
+        public PersonService(ProjectDbContext context, IPasswordHasher passwordHasher, IMapper mapper)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
+            _mapper = mapper;
         }
 
-        public void CrearPersona(Person person)
+        public (User user, string password) CrearPersona(PersonDTO personDTO)
         {
+            var person = _mapper.Map<Person>(personDTO);
             person.CalcularEdades();
             _context.Persons.Add(person);
             _context.SaveChanges();
 
-            person.User = GenerarUsuario(person);
-
+            var (user, password) = GenerarUsuario(person);
+            person.User = user;
             _context.SaveChanges();
+
+            return (user, password);
         }
 
-        public IEnumerable<Person> ObtenerTodasLasPersonas()
+        public IEnumerable<PersonDTO> ObtenerTodasLasPersonas()
         {
-            return _context.Persons.Include(p => p.User).ToList();
+            var persons = _context.Persons.Include(p => p.User).ToList();
+            return _mapper.Map<IEnumerable<PersonDTO>>(persons);
         }
 
-        public Person? PersonaPorID(int id)
+        public PersonDTO? PersonaPorID(int id)
         {
-            return _context.Persons.Include(_p => _p.User).FirstOrDefault(p => p.Id == id);
+            var person = _context.Persons.Include(p => p.User).FirstOrDefault(p => p.Id == id);
+            return person != null ? _mapper.Map<PersonDTO>(person) : null;
         }
 
-        public Person? PersonaPorIdentificacion(string identificacion)
+        public PersonDTO? PersonaPorIdentificacion(string identificacion)
         {
-            return _context.Persons.Include(p => p.User)
-                .FirstOrDefault(p => p.Identificacion == identificacion);
+            var person = _context.Persons.Include(_p => _p.User).FirstOrDefault(p => p.Identificacion == identificacion);
+            return person != null ? _mapper.Map<PersonDTO?>(person) : null;
+            //return _context.Persons.Include(p => p.User)
+            //    .FirstOrDefault(p => p.Identificacion == identificacion);
         }
 
-        public IEnumerable<Person> PersonaPorEdad(int edad)
+        public IEnumerable<PersonDTO> PersonaPorEdad(int edad)
         {
-            return _context.Persons.Include (_p => _p.User).Where(p => p.Fechanacimiento.HasValue && (DateTime.Now.Year - p.Fechanacimiento.Value.Year) == edad)
-                .ToList();
+            var persons = _context.Persons.Include(p => p.User).Where(p => p.Fechanacimiento.HasValue && (DateTime.Now.Year - p.Fechanacimiento.Value.Year) == edad).ToList();
+            return _mapper.Map<IEnumerable<PersonDTO>>(persons);
+            //return _context.Persons.Include (_p => _p.User).Where(p => p.Fechanacimiento.HasValue && (DateTime.Now.Year - p.Fechanacimiento.Value.Year) == edad)
+            //    .ToList();
         }
 
-        public IEnumerable<Person> PersonaPorPNombre(string Pnombre)
+        public IEnumerable<PersonDTO> PersonaPorPNombre(string Pnombre)
         {
-            return _context.Persons.Include(p => p.User).Where(p => p.Pnombre.Contains(Pnombre))
-                .ToList();
+            var persons = _context.Persons.Include(p => p.User).Where(p => p.Pnombre.Contains(Pnombre)).ToList();
+            return _mapper.Map<IEnumerable<PersonDTO>>(persons);
         }
 
-        public IEnumerable<Person> PersonaPorApellido(string PApellido)
+        public IEnumerable<PersonDTO> PersonaPorApellido(string PApellido)
         {
-            return _context.Persons.Include(p => p.User).Where(p => p.Papellido.Contains(PApellido))
-                .ToList();
+            var persons = _context.Persons.Include(p => p.User).Where(p => p.Papellido.Contains(PApellido)).ToList();
+            return _mapper.Map<IEnumerable<PersonDTO>>(persons);
+            //return _context.Persons.Include(p => p.User).Where(p => p.Papellido.Contains(PApellido))
+            //    .ToList();
         }
 
         public bool ActualizarPersona(Person person)
@@ -75,15 +91,16 @@ namespace Proyecto_POO.Services
 
         public bool CambiarPassword(int personaid, string newPasswrod)
         {
-            var user = _context.Users.Find(personaid);
+            var user = _context.Users.FirstOrDefault(u => u.Idpersona == personaid);
             if (user == null) return false;
-            user.Password = newPasswrod;
+            user.Password = _passwordHasher.HashPassword(newPasswrod);
             return _context.SaveChanges() > 0;
         }
 
-        public User GetUserDetails(int personid)
+        public UserDTO GetUserDetails(int personid)
         {
-            return _context.Users.Where(u => u.Idpersona == personid).FirstOrDefault();
+            var user = _context.Users.Where(u => u.Idpersona == personid).FirstOrDefault();
+            return _mapper.Map<UserDTO>(user);
 
         }
 
@@ -96,7 +113,7 @@ namespace Proyecto_POO.Services
 
         public string GenerarPassword()
         {
-            return Guid.NewGuid().ToString().Substring(0,8);
+            return Guid.NewGuid().ToString().Substring(0, 8);
         }
 
         public string GenerarApiKey()
@@ -104,16 +121,22 @@ namespace Proyecto_POO.Services
             return Guid.NewGuid().ToString("N");
         }
 
-        public User GenerarUsuario(Person person)
+        public (User user, string plainPassword) GenerarUsuario(Person person)
         {
-            return new User()
+            var password = GenerarPassword();
+            var hashedPassword = _passwordHasher.HashPassword(password);
+            var apiKey = GenerarApiKey();
+
+            var user = new User()
             {
                 Idpersona = person.Id,
                 Login = GenerarLogin(person),
-                Password = GenerarPassword(),
-                ApiKey = GenerarApiKey()
+                Password = hashedPassword,
+                ApiKey = apiKey
             };
+
+            return (user, password);
         }
-          
+
     }
 }

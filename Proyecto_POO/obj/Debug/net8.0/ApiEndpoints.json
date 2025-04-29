@@ -1,5 +1,21 @@
 [
   {
+    "ContainingType": "Proyecto_POO.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "login",
+        "Type": "Proyecto_POO.DTOs.LoginDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Proyecto_POO.Controllers.PersonaController",
     "Method": "CrearPersona",
     "RelativePath": "api/Persona",
@@ -9,7 +25,7 @@
     "Parameters": [
       {
         "Name": "person",
-        "Type": "Proyecto_POO.Models.Person",
+        "Type": "Proyecto_POO.DTOs.PersonDTO",
         "IsRequired": true
       }
     ],

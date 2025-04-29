@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Proyecto_POO.DTOs;
 using Proyecto_POO.Models;
 using Proyecto_POO.Services;
 
@@ -15,13 +17,26 @@ namespace Proyecto_POO.Controllers
             _personService = personService;
         }
 
+        
         [HttpPost]
-        public IActionResult CrearPersona([FromBody] Person person)
+        public IActionResult CrearPersona([FromBody] PersonDTO person)
         {
-            _personService.CrearPersona(person);
-            return Ok("Persona creada exitosamente");
-        }
+            var (user, password) = _personService.CrearPersona(person);
+            return Ok(new
+            {
+                mensaje = "Persona creada exitosamente",
+                usuario = new
+                {
+                    idpersona = user.Idpersona,
+                    login = user.Login,
+                    apiKey = user.ApiKey,
+                    password = password
+                },
+                
+            });
 
+        }
+        
         [HttpGet]
         public IActionResult ObtenerPersonas()
         {
@@ -29,7 +44,7 @@ namespace Proyecto_POO.Controllers
             return Ok(persons);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize]
         public IActionResult ObtenerPersona(int id)
         {
             var person = _personService.PersonaPorID(id);
@@ -37,7 +52,7 @@ namespace Proyecto_POO.Controllers
             {
                 return NotFound("No encontrado");
             }
-            return Ok(person);
+            return Ok(person);  
         }
 
         [HttpGet("by-identication/{identifacion}")]
@@ -99,8 +114,8 @@ namespace Proyecto_POO.Controllers
             var result =  _personService.CambiarPassword(id, newPassword);
             return result? Ok("Pasaporte cambiado"): NotFound();
         }
-
-        [HttpGet("User-details/{id}")]
+        
+        [HttpGet("User-details/{id}"), Authorize]
         public IActionResult GetUserDetails(int id)
         {
             var user = _personService.GetUserDetails(id);

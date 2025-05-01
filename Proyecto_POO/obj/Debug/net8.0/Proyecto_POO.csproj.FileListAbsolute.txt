@@ -178,3 +178,4 @@ C:\Users\oalej\Code\CsharpProjects\Web API\Proyecto_POO\Proyecto_POO\bin\Debug\n
 C:\Users\oalej\Code\CsharpProjects\Web API\Proyecto_POO\Proyecto_POO\bin\Debug\net8.0\Scrutor.dll
 C:\Users\oalej\Code\CsharpProjects\Web API\Proyecto_POO\Proyecto_POO\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.dll
 C:\Users\oalej\Code\CsharpProjects\Web API\Proyecto_POO\Proyecto_POO\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll
+C:\Users\oalej\Code\CsharpProjects\Web API\Proyecto_POO\Proyecto_POO\bin\Debug\net8.0\Newtonsoft.Json.dll

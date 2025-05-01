@@ -93,6 +93,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddDbContext<ProjectDbContext>(context => context.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHostedService<UbicacionMonitorService>();
+builder.Services.AddHttpClient<IGeocodingService, GeocodingServices>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

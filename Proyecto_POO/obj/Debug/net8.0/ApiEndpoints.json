@@ -194,5 +194,31 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyecto_POO.Controllers.UbicacionesController",
+    "Method": "GetUbicacionesActuales",
+    "RelativePath": "api/Ubicaciones/Actuales",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyecto_POO.Controllers.UbicacionesController",
+    "Method": "HistorialPersona",
+    "RelativePath": "api/Ubicaciones/historial/{personaID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personaID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]

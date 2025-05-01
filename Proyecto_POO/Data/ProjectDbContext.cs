@@ -9,6 +9,7 @@ namespace Proyecto_POO.Data
 
         public DbSet<Person> Persons { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Ubicacion> Ubicaciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +38,12 @@ namespace Proyecto_POO.Data
                 .Property(p => p.Papellido)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            modelBuilder.Entity<Ubicacion>()
+                .HasOne(u => u.Person)
+                .WithMany(p => p.Ubicacions)
+                .HasForeignKey(u => u.Idpersona)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
 
